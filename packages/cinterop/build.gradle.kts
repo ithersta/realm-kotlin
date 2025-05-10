@@ -23,15 +23,9 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("com.android.library")
     id("realm-publisher")
+    id("org.jetbrains.kotlinx.atomicfu") version Versions.atomicfu
 }
 
-buildscript {
-    dependencies {
-        classpath("org.jetbrains.kotlinx:atomicfu-gradle-plugin:${Versions.atomicfu}")
-    }
-}
-
-apply(plugin = "kotlinx-atomicfu")
 // AtomicFu cannot transform JVM code. Throws
 // ClassCastException: org.objectweb.asm.tree.InsnList cannot be cast to java.lang.Iterable
 project.extensions.configure(kotlinx.atomicfu.plugin.gradle.AtomicFUPluginExtension::class) {
@@ -518,7 +512,7 @@ fun Task.buildSharedLibrariesForJVMMacOs() {
                 "cmake",
                 *getSharedCMakeFlags(BuildType.RELEASE),
                 "-DCPACK_PACKAGE_DIRECTORY=..",
-                "-DCMAKE_OSX_ARCHITECTURES=x86_64;arm64",
+                "-DCMAKE_OSX_ARCHITECTURES=arm64",
                 project.file("src/jvm/")
             )
         }
@@ -590,7 +584,7 @@ fun Task.build_C_API_Macos_Universal(buildVariant: BuildType) {
                 "-DCMAKE_SYSTEM_NAME=Darwin",
                 "-DCPACK_SYSTEM_NAME=macosx",
                 "-DCPACK_PACKAGE_DIRECTORY=..",
-                "-DCMAKE_OSX_ARCHITECTURES=x86_64;arm64",
+                "-DCMAKE_OSX_ARCHITECTURES=arm64",
                 "-G",
                 "Xcode",
                 ".."
@@ -817,4 +811,25 @@ abstract class CmakeVersionProvider : ValueSource<String, ValueSourceParameters.
 // enable execution optimizations for generateSdkVersionConstant
 afterEvaluate {
     tasks.getByName("sourcesJar").dependsOn(generateSdkVersionConstant)
+    tasks.named("androidReleaseSourcesJar") {
+        dependsOn("generateSdkVersionConstant")
+    }
+    tasks.named("jvmSourcesJar") {
+        dependsOn("generateSdkVersionConstant")
+    }
+    tasks.named("iosArm64SourcesJar") {
+        dependsOn("generateSdkVersionConstant")
+    }
+    tasks.named("iosSimulatorArm64SourcesJar") {
+        dependsOn("generateSdkVersionConstant")
+    }
+    tasks.named("iosX64SourcesJar") {
+        dependsOn("generateSdkVersionConstant")
+    }
+    tasks.named("macosArm64SourcesJar") {
+        dependsOn("generateSdkVersionConstant")
+    }
+    tasks.named("macosX64SourcesJar") {
+        dependsOn("generateSdkVersionConstant")
+    }
 }

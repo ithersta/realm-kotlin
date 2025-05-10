@@ -112,8 +112,8 @@ tasks {
 
     // TODO Verify we can actually use these debug symbols
     val archiveDebugSymbols by register("archiveDebugSymbols", Zip::class) {
-        archiveName = "realm-kotlin-jni-libs-unstripped-${currentVersion}.zip"
-        destinationDir = releaseMetaDataDir
+        archiveFileName = "realm-kotlin-jni-libs-unstripped-${currentVersion}.zip"
+        destinationDirectory = releaseMetaDataDir
         from("${rootDir}/packages/cinterop/build/intermediates/merged_native_libs/release/out/lib") {
             include("**/*.so")
         }
